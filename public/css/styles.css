@@ -60,3 +60,15 @@ body {
 .hidden {
   color: white;
 }
+
+@media screen and (max-width: 600px) {
+  #grid-container {
+    grid-template-columns: repeat(8, 30px);
+  }
+
+  .grid-item {
+    height: 30px;
+    width: 30px;
+    font-size: 10px;
+  }
+}
