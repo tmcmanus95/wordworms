@@ -12,6 +12,8 @@ let score = 0;
 let currentWord = "";
 let englishWords;
 let pastCorrectWords = [];
+let isDragging = false;
+let startRow, startCol;
 
 let lastSelectedIndex = null;
 
@@ -297,9 +299,6 @@ function updatePastWordsDisplay(pastCorrectWords) {
   });
 }
 
-let isDragging = false;
-let startRow, startCol;
-
 gridContainer.addEventListener("touchstart", (event) => {
   isDragging = true;
   const { clientX, clientY } = event.touches[0];
@@ -328,6 +327,8 @@ gridContainer.addEventListener("touchend", () => {
 
 function getRowAndColFromCoordinates(x, y) {
   const rect = gridContainer.getBoundingClientRect();
+  const gridItemWidth = rect.width / numCols;
+  const gridItemHeight = rect.height / numRows;
   const col = Math.floor((x - rect.left) / gridItemWidth);
   const row = Math.floor((y - rect.top) / gridItemHeight);
   return { row, col };
