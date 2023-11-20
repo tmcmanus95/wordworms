@@ -323,6 +323,8 @@ gridContainer.addEventListener("touchmove", (event) => {
 
 gridContainer.addEventListener("touchend", () => {
   isDragging = false;
+  checkWordValidity(currentWord);
+  clearSelectedTiles();
 });
 
 function getRowAndColFromCoordinates(x, y) {
