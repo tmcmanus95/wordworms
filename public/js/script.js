@@ -85,34 +85,50 @@ function toggleSelection(row, col) {
   const index = row * numCols + col;
   const gridItem = gridContainer.children[index];
   const currentLetter = gridItem.textContent;
+
+  // Calculate the center coordinates of the gridItem
+  const rect = gridItem.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  // Get the touch coordinates
+  const touchX = startTouchX;
+  const touchY = startTouchY;
+  const totalDistance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+
+  if (totalDistance > distanceThreshold) {
+    event.preventDefault();
+  }
+  // Check if the touch coordinates are close to the center
+  const distanceThreshold = Math.min(rect.width, rect.height) / 5; // Adjust the threshold as needed
+  const isTouchNearCenter =
+    Math.abs(touchX - centerX) < distanceThreshold &&
+    Math.abs(touchY - centerY) < distanceThreshold;
+
   // Check if the tile is already selected
   const isSelected = selectedTiles.some(
     (tile) => tile.row === row && tile.col === col
   );
 
-  if (isSelected) {
-    // If the tile is already selected, find its index and deselect it
-    const selectedIndex = selectedTiles.findIndex(
-      (tile) => tile.row === row && tile.col === col
-    );
+  if (isTouchNearCenter && (isSelected || selectedTiles.length === 0)) {
+    // Toggle the tile and include the index
+    if (isSelected) {
+      // If the tile is already selected, find its index and deselect it
+      const selectedIndex = selectedTiles.findIndex(
+        (tile) => tile.row === row && tile.col === col
+      );
 
-    if (selectedIndex === lastSelectedIndex) {
-      // Deselect the tile
-      selectedTiles.splice(selectedIndex, 1);
-      gridItem.classList.remove("selected");
-      currentWord = currentWord.slice(0, -1);
+      if (selectedIndex === lastSelectedIndex) {
+        // Deselect the tile
+        selectedTiles.splice(selectedIndex, 1);
+        gridItem.classList.remove("selected");
+        currentWord = currentWord.slice(0, -1);
 
-      // Update the last selected index for the case of sequential reverse deselection
-      lastSelectedIndex =
-        selectedTiles.length > 0 ? selectedTiles.length - 1 : null;
-    }
-  } else {
-    // Check if the tile is adjacent to any selected tile
-    const isAdjacent = selectedTiles.some(
-      (tile) => Math.abs(tile.row - row) <= 1 && Math.abs(tile.col - col) <= 1
-    );
-
-    if (isAdjacent || selectedTiles.length === 0) {
+        // Update the last selected index for the case of sequential reverse deselection
+        lastSelectedIndex =
+          selectedTiles.length > 0 ? selectedTiles.length - 1 : null;
+      }
+    } else {
       // Select the tile and include the index
       selectedTiles.push({
         row,
@@ -125,18 +141,18 @@ function toggleSelection(row, col) {
 
       lastSelectedIndex = selectedTiles.length - 1;
     }
-  }
 
-  console.clear();
-  console.log(selectedTiles);
-  console.log(currentWord);
+    console.clear();
+    console.log(selectedTiles);
+    console.log(currentWord);
 
-  currentWordDisplay.textContent = currentWord;
-  const columnInstances = countColumnInstances(selectedTiles);
-  for (i = 0; i < columnInstances.length; i++) {
-    findInstancesForColumn(columnInstances, columnInstances[i].column);
+    currentWordDisplay.textContent = currentWord;
+    const columnInstances = countColumnInstances(selectedTiles);
+    for (i = 0; i < columnInstances.length; i++) {
+      findInstancesForColumn(columnInstances, columnInstances[i].column);
+    }
+    console.log(columnInstances);
   }
-  console.log(columnInstances);
 }
 
 function findInstancesForColumn(columnInstances, targetColumn) {
@@ -333,17 +349,18 @@ gridContainer.addEventListener("touchstart", (event) => {
 gridContainer.addEventListener("touchmove", (event) => {
   if (isDragging) {
     event.preventDefault();
+
     const { clientX, clientY } = event.touches[0];
     const deltaX = clientX - startTouchX;
     const deltaY = clientY - startTouchY;
-    const diagonalThreshold = 1; // Adjust the threshold as needed
 
-    if (
-      Math.abs(deltaX) > diagonalThreshold ||
-      Math.abs(deltaY) > diagonalThreshold
-    ) {
+    const totalDistance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+    const distanceThreshold = 10; // Adjust as needed
+
+    if (totalDistance > distanceThreshold) {
       const row = getRowAndColFromCoordinates(clientX, clientY).row;
       const col = getRowAndColFromCoordinates(clientX, clientY).col;
+
       if (row !== startRow || col !== startCol) {
         toggleSelection(row, col);
         startRow = row;
