@@ -308,16 +308,6 @@ function checkWordValidity(word) {
     selectedTiles = [];
   }, 1000);
 }
-function getCenterCoordinates(row, col) {
-  const rect = gridContainer.getBoundingClientRect();
-  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
-  const numCols = isMobile() ? numColsMobile : numColsDesktop;
-  const gridItemWidth = rect.width / numCols;
-  const gridItemHeight = rect.height / numRows;
-  const centerX = (col + 0.5) * gridItemWidth + rect.left;
-  const centerY = (row + 0.5) * gridItemHeight + rect.top;
-  return { x: centerX, y: centerY };
-}
 
 function updatePastWordsDisplay(pastCorrectWords) {
   pastWordsDisplay.textContent = "";
@@ -352,19 +342,9 @@ gridContainer.addEventListener("touchmove", (event) => {
       Math.abs(deltaX) > diagonalThreshold ||
       Math.abs(deltaY) > diagonalThreshold
     ) {
-      const { row, col } = getRowAndColFromCoordinates(clientX, clientY);
-      const centerCoordinates = getCenterCoordinates(row, col);
-
-      // Calculate the distance from the touch point to the center of the grid item
-      const distance = Math.sqrt(
-        Math.pow(clientX - centerCoordinates.x, 2) +
-          Math.pow(clientY - centerCoordinates.y, 2)
-      );
-
-      // Define a threshold distance for the touch to be considered on the letter
-      const letterTouchThreshold = 20; // Adjust as needed
-
-      if (distance < letterTouchThreshold) {
+      const row = getRowAndColFromCoordinates(clientX, clientY).row;
+      const col = getRowAndColFromCoordinates(clientX, clientY).col;
+      if (row !== startRow || col !== startCol) {
         toggleSelection(row, col);
         startRow = row;
         startCol = col;
@@ -410,3 +390,51 @@ window.addEventListener("resize", () => {
     lastWindowWidth = currentWindowWidth;
   }
 });
+//Testing center find
+
+// gridContainer.addEventListener("touchmove", (event) => {
+//   if (isDragging) {
+//     event.preventDefault();
+//     const { clientX, clientY } = event.touches[0];
+//     const deltaX = clientX - startTouchX;
+//     const deltaY = clientY - startTouchY;
+//     const diagonalThreshold = 1; // Adjust the threshold as needed
+
+//     if (
+//       Math.abs(deltaX) > diagonalThreshold ||
+//       Math.abs(deltaY) > diagonalThreshold
+//     ) {
+//       const { row, col } = getRowAndColFromCoordinates(clientX, clientY);
+//       const centerCoordinates = getCenterCoordinates(row, col);
+
+//       // Calculate the distance from the touch point to the center of the grid item
+//       const distance = Math.sqrt(
+//         Math.pow(clientX - centerCoordinates.x, 2) +
+//         Math.pow(clientY - centerCoordinates.y, 2)
+//       );
+
+//       // Define a threshold distance for the touch to be considered on the letter
+//       const letterTouchThreshold = 20; // Adjust as needed
+
+//       if (distance < letterTouchThreshold) {
+//         toggleSelection(row, col);
+//         startRow = row;
+//         startCol = col;
+//         startTouchX = clientX;
+//         startTouchY = clientY;
+//       }
+//     }
+//   }
+// });
+
+// // Function to get the center coordinates of a grid item
+// function getCenterCoordinates(row, col) {
+//   const rect = gridContainer.getBoundingClientRect();
+//   const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+//   const numCols = isMobile() ? numColsMobile : numColsDesktop;
+//   const gridItemWidth = rect.width / numCols;
+//   const gridItemHeight = rect.height / numRows;
+//   const centerX = (col + 0.5) * gridItemWidth + rect.left;
+//   const centerY = (row + 0.5) * gridItemHeight + rect.top;
+//   return { x: centerX, y: centerY };
+// }
