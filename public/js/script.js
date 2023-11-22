@@ -1,5 +1,7 @@
-const numRows = 8;
-const numCols = 8;
+const numRowsDesktop = 10;
+const numColsDesktop = 10;
+const numRowsMobile = 6;
+const numColsMobile = 6;
 const gridContainer = document.querySelector("#grid-container");
 const pastWordsDisplay = document.querySelector("#past-words-display");
 const submitButton = document.querySelector("#submit-button");
@@ -27,7 +29,14 @@ fetch("../../words_dictionary.json")
   })
   .catch((error) => console.error("Error fetching words dictionary:", error));
 
+function isMobile() {
+  return window.innerWidth <= 599;
+}
+
 function createGrid() {
+  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+  const numCols = isMobile() ? numColsMobile : numColsDesktop;
+
   for (let row = 0; row < numRows; row++) {
     for (let col = 0; col < numCols; col++) {
       const gridItem = document.createElement("div");
@@ -68,6 +77,9 @@ function countColumnInstances(selectedTiles) {
 }
 
 function toggleSelection(row, col) {
+  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+  const numCols = isMobile() ? numColsMobile : numColsDesktop;
+
   const index = row * numCols + col;
   const gridItem = gridContainer.children[index];
   const currentLetter = gridItem.textContent;
@@ -138,6 +150,9 @@ function findInstancesForColumn(columnInstances, targetColumn) {
 }
 
 function clearSelectedTiles() {
+  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+  const numCols = isMobile() ? numColsMobile : numColsDesktop;
+
   selectedTiles.forEach((tile) => {
     const index = tile.row * numCols + tile.col;
     const gridItem = gridContainer.children[index];
@@ -210,6 +225,8 @@ function randomizeLetters(selectedTiles) {
   // Convert sets to arrays for easier iteration
   const rowsArray = Array.from(uniqueRows);
   const columnsArray = Array.from(uniqueColumns);
+  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+  const numCols = isMobile() ? numColsMobile : numColsDesktop;
 
   // Randomize letters in rows
   rowsArray.forEach((row) => {
@@ -245,6 +262,8 @@ function randomizeLetters(selectedTiles) {
 
 function checkWordValidity(word) {
   wordStatusDisplay.textContent = "";
+  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+  const numCols = isMobile() ? numColsMobile : numColsDesktop;
 
   if (word.length > 2 && englishWords.hasOwnProperty(word.toLowerCase())) {
     console.log(`${word} is a valid English word.`);
@@ -328,6 +347,9 @@ gridContainer.addEventListener("touchend", () => {
 });
 
 function getRowAndColFromCoordinates(x, y) {
+  const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
+  const numCols = isMobile() ? numColsMobile : numColsDesktop;
+
   const rect = gridContainer.getBoundingClientRect();
   const gridItemWidth = rect.width / numCols;
   const gridItemHeight = rect.height / numRows;
@@ -339,4 +361,9 @@ function getRowAndColFromCoordinates(x, y) {
 submitButton.addEventListener("click", function () {
   checkWordValidity(currentWord);
   clearSelectedTiles();
+});
+
+window.addEventListener("resize", () => {
+  gridContainer.innerHTML = ""; // Clear the existing grid
+  createGrid(); // Recreate the grid based on the updated window size
 });
