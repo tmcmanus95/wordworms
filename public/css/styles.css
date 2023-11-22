@@ -67,9 +67,9 @@ span.correct {
   border-radius: 3px;
 }
 
-span.correct {
+span.incorrect {
   padding: 5px;
-  background-color: darkseagreen;
+  background-color: indianred;
   border-radius: 3px;
 }
 
