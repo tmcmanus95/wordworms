@@ -336,15 +336,11 @@ gridContainer.addEventListener("touchmove", (event) => {
     const { clientX, clientY } = event.touches[0];
     const deltaX = clientX - startTouchX;
     const deltaY = clientY - startTouchY;
-    const angleThreshold = 30; // Adjust the threshold as needed
+    const diagonalThreshold = 1; // Adjust the threshold as needed
 
-    // Calculate the angle of the drag using arctangent
-    const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-
-    // Check if the angle is within the threshold for diagonal movement
     if (
-      Math.abs(angle) > angleThreshold &&
-      Math.abs(angle) < 180 - angleThreshold
+      Math.abs(deltaX) > diagonalThreshold ||
+      Math.abs(deltaY) > diagonalThreshold
     ) {
       const row = getRowAndColFromCoordinates(clientX, clientY).row;
       const col = getRowAndColFromCoordinates(clientX, clientY).col;
