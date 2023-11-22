@@ -335,7 +335,7 @@ gridContainer.addEventListener("touchmove", (event) => {
     const { clientX, clientY } = event.touches[0];
     const deltaX = clientX - startTouchX;
     const deltaY = clientY - startTouchY;
-    const diagonalThreshold = 10; // Adjust the threshold as needed
+    const diagonalThreshold = 5; // Adjust the threshold as needed
 
     if (
       Math.abs(deltaX) > diagonalThreshold ||
