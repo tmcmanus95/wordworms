@@ -6,6 +6,7 @@ const gridContainer = document.querySelector("#grid-container");
 const pastWordsDisplay = document.querySelector("#past-words-display");
 const submitButton = document.querySelector("#submit-button");
 const toggleModeButton = document.querySelector("#toggle-mode-button");
+const modeStatusDisplay = document.querySelector("#mode-status-display");
 const currentWordContainer = document.querySelector("#current-word-container");
 const currentWordDisplay = document.querySelector("#current-word-display");
 const wordStatusDisplay = document.querySelector("#word-status-display");
@@ -40,6 +41,11 @@ function isMobile() {
 function toggleSelectionMode() {
   isClickMode = !isClickMode;
   console.log(`Click mode is ${isClickMode}`);
+  if (isClickMode) {
+    modeStatusDisplay.textContent = "Click";
+  } else {
+    modeStatusDisplay.textContent = "Drag";
+  }
 }
 
 function createGrid() {
