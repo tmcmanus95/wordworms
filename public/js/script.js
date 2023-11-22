@@ -16,6 +16,7 @@ let englishWords;
 let pastCorrectWords = [];
 let isDragging = false;
 let startRow, startCol;
+let startTouchX, startTouchY;
 
 let lastSelectedIndex = null;
 
@@ -321,21 +322,34 @@ function updatePastWordsDisplay(pastCorrectWords) {
 gridContainer.addEventListener("touchstart", (event) => {
   isDragging = true;
   const { clientX, clientY } = event.touches[0];
-  const { row, col } = getRowAndColFromCoordinates(clientX, clientY);
-  startRow = row;
-  startCol = col;
-  toggleSelection(row, col);
+  startRow = getRowAndColFromCoordinates(clientX, clientY).row;
+  startCol = getRowAndColFromCoordinates(clientX, clientY).col;
+  startTouchX = clientX;
+  startTouchY = clientY;
+  toggleSelection(startRow, startCol);
 });
 
 gridContainer.addEventListener("touchmove", (event) => {
   if (isDragging) {
     event.preventDefault();
     const { clientX, clientY } = event.touches[0];
-    const { row, col } = getRowAndColFromCoordinates(clientX, clientY);
-    if (row !== startRow || col !== startCol) {
-      toggleSelection(row, col);
-      startRow = row;
-      startCol = col;
+    const deltaX = clientX - startTouchX;
+    const deltaY = clientY - startTouchY;
+    const diagonalThreshold = 10; // Adjust the threshold as needed
+
+    if (
+      Math.abs(deltaX) > diagonalThreshold ||
+      Math.abs(deltaY) > diagonalThreshold
+    ) {
+      const row = getRowAndColFromCoordinates(clientX, clientY).row;
+      const col = getRowAndColFromCoordinates(clientX, clientY).col;
+      if (row !== startRow || col !== startCol) {
+        toggleSelection(row, col);
+        startRow = row;
+        startCol = col;
+        startTouchX = clientX;
+        startTouchY = clientY;
+      }
     }
   }
 });

@@ -91,7 +91,7 @@ body {
 @media screen and (max-width: 599px) {
   #grid-container {
     grid-template-columns: repeat(6, 1fr);
-    grid-gap: 5px;
+    grid-gap: 3px;
   }
 
   .grid-item {
