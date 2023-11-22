@@ -17,6 +17,7 @@ let pastCorrectWords = [];
 let isDragging = false;
 let startRow, startCol;
 let startTouchX, startTouchY;
+let lastWindowWidth = window.innerWidth;
 
 let lastSelectedIndex = null;
 
@@ -335,11 +336,15 @@ gridContainer.addEventListener("touchmove", (event) => {
     const { clientX, clientY } = event.touches[0];
     const deltaX = clientX - startTouchX;
     const deltaY = clientY - startTouchY;
-    const diagonalThreshold = 1; // Adjust the threshold as needed
+    const angleThreshold = 30; // Adjust the threshold as needed
 
+    // Calculate the angle of the drag using arctangent
+    const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+    // Check if the angle is within the threshold for diagonal movement
     if (
-      Math.abs(deltaX) > diagonalThreshold ||
-      Math.abs(deltaY) > diagonalThreshold
+      Math.abs(angle) > angleThreshold &&
+      Math.abs(angle) < 180 - angleThreshold
     ) {
       const row = getRowAndColFromCoordinates(clientX, clientY).row;
       const col = getRowAndColFromCoordinates(clientX, clientY).col;
@@ -378,6 +383,14 @@ submitButton.addEventListener("click", function () {
 });
 
 window.addEventListener("resize", () => {
-  gridContainer.innerHTML = ""; // Clear the existing grid
-  createGrid(); // Recreate the grid based on the updated window size
+  const currentWindowWidth = window.innerWidth;
+
+  // Check if the width has actually changed
+  if (currentWindowWidth !== lastWindowWidth) {
+    gridContainer.innerHTML = ""; // Clear the existing grid
+    createGrid(); // Recreate the grid based on the updated window size
+
+    // Update the lastWindowWidth variable
+    lastWindowWidth = currentWindowWidth;
+  }
 });
