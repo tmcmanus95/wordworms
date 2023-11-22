@@ -5,7 +5,7 @@ const numColsMobile = 5;
 const gridContainer = document.querySelector("#grid-container");
 const pastWordsDisplay = document.querySelector("#past-words-display");
 const submitButton = document.querySelector("#submit-button");
-const testSubmitButton = document.querySelector("#test-submit-button");
+const toggleModeButton = document.querySelector("#toggle-mode-button");
 const currentWordContainer = document.querySelector("#current-word-container");
 const currentWordDisplay = document.querySelector("#current-word-display");
 const wordStatusDisplay = document.querySelector("#word-status-display");
@@ -19,6 +19,7 @@ let isDragging = false;
 let startRow, startCol;
 let startTouchX, startTouchY;
 let lastWindowWidth = window.innerWidth;
+let isClickMode = true;
 
 let lastSelectedIndex = null;
 
@@ -36,6 +37,11 @@ function isMobile() {
   return window.innerWidth <= 599;
 }
 
+function toggleSelectionMode() {
+  isClickMode = !isClickMode;
+  console.log(`Click mode is ${isClickMode}`);
+}
+
 function createGrid() {
   const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
   const numCols = isMobile() ? numColsMobile : numColsDesktop;
@@ -47,7 +53,7 @@ function createGrid() {
       gridItem.textContent = getRandomLetter();
       let coordinates = `${row},${col}`;
       gridItem.id = coordinates;
-      gridItem.addEventListener("click", () => toggleSelection(row, col));
+      gridItem.addEventListener("click", () => handleSelection());
       gridContainer.appendChild(gridItem);
     }
   }
@@ -82,7 +88,7 @@ function countColumnInstances(selectedTiles) {
 function toggleSelection(row, col) {
   const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
   const numCols = isMobile() ? numColsMobile : numColsDesktop;
-
+  console.log("Toggle selection is running");
   const index = row * numCols + col;
   const gridItem = gridContainer.children[index];
   const currentLetter = gridItem.textContent;
@@ -329,19 +335,27 @@ function updatePastWordsDisplay(pastCorrectWords) {
     pastWordsDisplay.appendChild(correctWordDisplay);
   });
 }
+function handleSelection(event) {
+  if (isClickMode) {
+    const { row, col } = getRowAndColFromEvent(event);
+    toggleSelection(row, col);
+  }
+}
 
-gridContainer.addEventListener("touchstart", (event) => {
-  isDragging = true;
-  const { clientX, clientY } = event.touches[0];
-  startRow = getRowAndColFromCoordinates(clientX, clientY).row;
-  startCol = getRowAndColFromCoordinates(clientX, clientY).col;
-  startTouchX = clientX;
-  startTouchY = clientY;
-  toggleSelection(startRow, startCol);
-});
+function handleTouchStart(event) {
+  if (!isClickMode) {
+    isDragging = true;
+    const { clientX, clientY } = event.touches[0];
+    startRow = getRowAndColFromCoordinates(clientX, clientY).row;
+    startCol = getRowAndColFromCoordinates(clientX, clientY).col;
+    startTouchX = clientX;
+    startTouchY = clientY;
+    toggleSelection(startRow, startCol);
+  }
+}
 
-gridContainer.addEventListener("touchmove", (event) => {
-  if (isDragging) {
+function handleTouchMove(event) {
+  if (isDragging && !isClickMode) {
     event.preventDefault();
     const { clientX, clientY } = event.touches[0];
     const deltaX = clientX - startTouchX;
@@ -363,13 +377,20 @@ gridContainer.addEventListener("touchmove", (event) => {
       }
     }
   }
-});
+}
 
-gridContainer.addEventListener("touchend", () => {
-  isDragging = false;
-  checkWordValidity(currentWord);
-  clearSelectedTiles();
-});
+function handleTouchEnd() {
+  if (!isClickMode) {
+    isDragging = false;
+    checkWordValidity(currentWord);
+    clearSelectedTiles();
+  }
+}
+
+function getRowAndColFromEvent(event) {
+  const { clientX, clientY } = event;
+  return getRowAndColFromCoordinates(clientX, clientY);
+}
 
 function getRowAndColFromCoordinates(x, y) {
   const numRows = isMobile() ? numRowsMobile : numRowsDesktop;
@@ -387,6 +408,16 @@ submitButton.addEventListener("click", function () {
   checkWordValidity(currentWord);
   clearSelectedTiles();
 });
+
+toggleModeButton.addEventListener("click", toggleSelectionMode);
+
+gridContainer.addEventListener("click", handleSelection);
+
+gridContainer.addEventListener("touchstart", handleTouchStart);
+
+gridContainer.addEventListener("touchmove", handleTouchMove);
+
+gridContainer.addEventListener("touchend", handleTouchEnd);
 
 window.addEventListener("resize", () => {
   const currentWindowWidth = window.innerWidth;
