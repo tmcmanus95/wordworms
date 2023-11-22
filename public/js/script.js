@@ -6,6 +6,7 @@ const gridContainer = document.querySelector("#grid-container");
 const pastWordsDisplay = document.querySelector("#past-words-display");
 const submitButton = document.querySelector("#submit-button");
 const testSubmitButton = document.querySelector("#test-submit-button");
+const currentWordContainer = document.querySelector("#current-word-container");
 const currentWordDisplay = document.querySelector("#current-word-display");
 const wordStatusDisplay = document.querySelector("#word-status-display");
 const scoreDisplay = document.querySelector("#score-display");
@@ -278,6 +279,7 @@ function checkWordValidity(word) {
       const index = row * numCols + col;
       const gridItem = gridContainer.children[index];
       gridItem.classList.add("correct");
+      currentWordDisplay.classList.add("correct");
     });
     pastCorrectWords.push(word);
     const sortedCorectWords = pastCorrectWords.sort(
@@ -285,6 +287,12 @@ function checkWordValidity(word) {
     );
     updatePastWordsDisplay(pastCorrectWords);
     console.log("Past correct words: ", sortedCorectWords);
+    currentWordDisplay.classList.add("correct");
+    setTimeout(() => {
+      wordStatusDisplay.textContent = "";
+      currentWordDisplay.textContent = "";
+      currentWordDisplay.classList.remove("correct");
+    }, 1000);
     randomizeLetters(selectedTiles);
   } else {
     console.log(`${word} is not a valid English word.`);
@@ -293,6 +301,7 @@ function checkWordValidity(word) {
       const index = row * numCols + col;
       const gridItem = gridContainer.children[index];
       gridItem.classList.add("incorrect");
+      currentWordDisplay.classList.add("incorrect");
     });
     wordStatusDisplay.textContent = `${word} is not a valid English word.`;
   }
@@ -304,6 +313,7 @@ function checkWordValidity(word) {
       const index = row * numCols + col;
       const gridItem = gridContainer.children[index];
       gridItem.classList.remove("incorrect");
+      currentWordDisplay.classList.remove("incorrect");
     });
     selectedTiles = [];
   }, 1000);

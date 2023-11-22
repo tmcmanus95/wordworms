@@ -12,14 +12,20 @@
   </head>
   <body>
     <header>
-      <h1>Word Worms</h1>
+      <div id="header-container">
+        <h1 id="title-display">Word Worms</h1>
+        <div>
+          <h2 id="current-word-container">
+            | <span id="current-word-display"></span> |
+          </h2>
+        </div>
+      </div>
     </header>
     <div id="main-container">
       <!-- <h1 class="hidden">Word Worms</h1> -->
       <div id="grid-container"></div>
     </div>
     <button id="submit-button">Submit</button>
-    <div>Current Word: <span id="current-word-display"></span></div>
     <div>Valid: <span id="word-status-display"></span></div>
     <div>Score: <span id="score-display"></span></div>
     <div id="past-words-display-container">

@@ -15,6 +15,22 @@ body {
   margin: 0;
 }
 
+#current-word-container {
+  color: white;
+}
+
+#header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items horizontally */
+  text-align: center; /* Center text within items */
+}
+
+#title-display,
+#current-word-display {
+  margin: 0; /* Remove default margin for h1 and h2 */
+  color: black;
+}
 #main-container {
   display: flex;
   justify-content: center;
@@ -36,8 +52,25 @@ body {
   flex-grow: 1;
 }
 
+#current-word-display {
+  height: 40px; /* Set a fixed height for current-word-display */
+  overflow: hidden; /* Hide overflow content */
+}
+
 .grid-item.randomized.correct {
   background-color: darkseagreen;
+}
+
+span.correct {
+  padding: 5px;
+  background-color: darkseagreen;
+  border-radius: 3px;
+}
+
+span.correct {
+  padding: 5px;
+  background-color: darkseagreen;
+  border-radius: 3px;
 }
 
 .grid-item.randomized {
