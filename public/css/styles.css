@@ -109,6 +109,14 @@ span.incorrect {
   color: white;
 }
 
+button {
+  padding: 5px;
+  background-color: palevioletred;
+  border-radius: 3px;
+  font-size: 15px;
+  margin: 5px;
+}
+
 @media screen and (min-width: 600px) {
   #grid-container {
     grid-template-columns: repeat(10, 1fr);
